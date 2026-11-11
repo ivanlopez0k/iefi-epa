@@ -3,11 +3,8 @@ import styles from './CombinatoricsModule.module.css';
 import {
   calculatePermutationSimple,
   calculatePermutationRepetition,
-  calculatePermutationCircular,
   calculateVariationSimple,
-  calculateVariationRepetition,
-  calculateCombinationSimple,
-  calculateCombinationRepetition
+  calculateCombinationSimple
 } from '../../core/combinatorics/math';
 import { classifyCombinatorics } from '../../core/combinatorics/classifier';
 import type { CombinatoricsType, CombinatoricsResult } from '../../types';
@@ -23,7 +20,7 @@ export const CombinatoricsModule: React.FC = () => {
   const [usesAllElements, setUsesAllElements] = useState<boolean>(true);
   const [allowsRepetition, setAllowsRepetition] = useState<boolean>(false);
 
-  // Selected formula
+  // Selected formula (limited to syllabus: Permutación Simple, Permutación c/ Repetición, Variación Simple, Combinación Simple)
   const [calcType, setCalcType] = useState<CombinatoricsType>('permutation_simple');
 
   // Inputs
@@ -56,20 +53,11 @@ export const CombinatoricsModule: React.FC = () => {
       result = calculatePermutationRepetition(n, reps);
       break;
     }
-    case 'permutation_circular':
-      result = calculatePermutationCircular(n);
-      break;
     case 'variation_simple':
       result = calculateVariationSimple(n, k);
       break;
-    case 'variation_rep':
-      result = calculateVariationRepetition(n, k);
-      break;
     case 'combination_simple':
       result = calculateCombinationSimple(n, k);
-      break;
-    case 'combination_rep':
-      result = calculateCombinationRepetition(n, k);
       break;
     default:
       result = calculatePermutationSimple(n);
@@ -97,14 +85,6 @@ export const CombinatoricsModule: React.FC = () => {
             />
           </>
         );
-      case 'permutation_circular':
-        return (
-          <>
-            <span>PC<sub>{n}</sub></span>
-            <span style={{ margin: '0 0.5rem' }}>=</span>
-            <span>({n} - 1)!</span>
-          </>
-        );
       case 'variation_simple':
         return (
           <>
@@ -114,14 +94,6 @@ export const CombinatoricsModule: React.FC = () => {
               num={<span>{n}!</span>}
               den={<span>({n} - {k})!</span>}
             />
-          </>
-        );
-      case 'variation_rep':
-        return (
-          <>
-            <span>VR<sub>{n}</sub><sup>{k}</sup></span>
-            <span style={{ margin: '0 0.5rem' }}>=</span>
-            <span>{n}<sup>{k}</sup></span>
           </>
         );
       case 'combination_simple':
@@ -135,17 +107,8 @@ export const CombinatoricsModule: React.FC = () => {
             />
           </>
         );
-      case 'combination_rep':
-        return (
-          <>
-            <span>CR<sub>{n}</sub><sup>{k}</sup></span>
-            <span style={{ margin: '0 0.5rem' }}>=</span>
-            <Fraction
-              num={<span>({n} + {k} - 1)!</span>}
-              den={<span>{k}! · ({n} - 1)!</span>}
-            />
-          </>
-        );
+      default:
+        return null;
     }
   };
 
@@ -175,7 +138,7 @@ export const CombinatoricsModule: React.FC = () => {
           <div className="card-header">
             <h3 className="card-title">
               <HelpCircle className={styles.accentIcon} size={20} />
-              Cuestionario de 3 Preguntas Clave
+              Cuestionario de Decisión
             </h3>
             <span className="badge badge-primary">Guía de Conteo</span>
           </div>
@@ -208,51 +171,55 @@ export const CombinatoricsModule: React.FC = () => {
               </div>
             </div>
 
-            {/* Q2 */}
-            <div className={styles.questionBlock}>
-              <label className={styles.questionLabel}>
-                2. ¿Intervienen TODOS los elementos disponibles a la vez?
-              </label>
-              <div className={styles.toggleRow}>
-                <button
-                  type="button"
-                  className={`${styles.toggleBtn} ${usesAllElements ? styles.toggleActive : ''}`}
-                  onClick={() => setUsesAllElements(true)}
-                >
-                  SÍ (Se usan todos: n = k)
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.toggleBtn} ${!usesAllElements ? styles.toggleActive : ''}`}
-                  onClick={() => setUsesAllElements(false)}
-                >
-                  NO (Se toma un subconjunto k &lt; n)
-                </button>
+            {/* Q2 (Only if order matters) */}
+            {orderMatters && (
+              <div className={styles.questionBlock}>
+                <label className={styles.questionLabel}>
+                  2. ¿Intervienen TODOS los elementos disponibles a la vez?
+                </label>
+                <div className={styles.toggleRow}>
+                  <button
+                    type="button"
+                    className={`${styles.toggleBtn} ${usesAllElements ? styles.toggleActive : ''}`}
+                    onClick={() => setUsesAllElements(true)}
+                  >
+                    SÍ (Se usan todos: n = k → Permutación)
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.toggleBtn} ${!usesAllElements ? styles.toggleActive : ''}`}
+                    onClick={() => setUsesAllElements(false)}
+                  >
+                    NO (Se toma un subconjunto k &lt; n → Variación)
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Q3 */}
-            <div className={styles.questionBlock}>
-              <label className={styles.questionLabel}>
-                3. ¿Se pueden REPETIR los elementos?
-              </label>
-              <div className={styles.toggleRow}>
-                <button
-                  type="button"
-                  className={`${styles.toggleBtn} ${allowsRepetition ? styles.toggleActive : ''}`}
-                  onClick={() => setAllowsRepetition(true)}
-                >
-                  SÍ (Con Repetición)
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.toggleBtn} ${!allowsRepetition ? styles.toggleActive : ''}`}
-                  onClick={() => setAllowsRepetition(false)}
-                >
-                  NO (Sin Repetición)
-                </button>
+            {/* Q3 (Only if uses all elements and order matters) */}
+            {orderMatters && usesAllElements && (
+              <div className={styles.questionBlock}>
+                <label className={styles.questionLabel}>
+                  3. ¿Se pueden REPETIR elementos?
+                </label>
+                <div className={styles.toggleRow}>
+                  <button
+                    type="button"
+                    className={`${styles.toggleBtn} ${allowsRepetition ? styles.toggleActive : ''}`}
+                    onClick={() => setAllowsRepetition(true)}
+                  >
+                    SÍ (Permutación con Repetición)
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.toggleBtn} ${!allowsRepetition ? styles.toggleActive : ''}`}
+                    onClick={() => setAllowsRepetition(false)}
+                  >
+                    NO (Permutación Simple)
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className={styles.diagnosisBox}>
@@ -269,14 +236,14 @@ export const CombinatoricsModule: React.FC = () => {
         </div>
       )}
 
-      {/* Formula Selector Categorized */}
+      {/* Formula Selector */}
       <div className="card">
         <div className="card-header">
           <h2 className="card-title">Selección de Técnica y Parámetros</h2>
           <span className="badge badge-teal">Unidad 1</span>
         </div>
 
-        {/* Categorized buttons */}
+        {/* Categorized buttons: Only Permutaciones, Variaciones Simples y Combinaciones Simples */}
         <div className={styles.categoriesContainer}>
           {/* Permutaciones */}
           <div className={styles.categoryGroup}>
@@ -296,19 +263,12 @@ export const CombinatoricsModule: React.FC = () => {
               >
                 Con Repetición: <strong>P<sub>n</sub><sup>a,b...</sup></strong>
               </button>
-              <button
-                type="button"
-                className={`${styles.formulaPill} ${calcType === 'permutation_circular' ? styles.formulaPillActive : ''}`}
-                onClick={() => setCalcType('permutation_circular')}
-              >
-                Circular: <strong>PC(n) = (n-1)!</strong>
-              </button>
             </div>
           </div>
 
           {/* Variaciones */}
           <div className={styles.categoryGroup}>
-            <span className={styles.groupHeading}>Variaciones (Orden SÍ • No entran todos):</span>
+            <span className={styles.groupHeading}>Variaciones (Orden SÍ • Subconjunto k &lt; n):</span>
             <div className={styles.groupButtons}>
               <button
                 type="button"
@@ -316,13 +276,6 @@ export const CombinatoricsModule: React.FC = () => {
                 onClick={() => setCalcType('variation_simple')}
               >
                 Simple: <strong>V(n, k) = n! / (n-k)!</strong>
-              </button>
-              <button
-                type="button"
-                className={`${styles.formulaPill} ${calcType === 'variation_rep' ? styles.formulaPillActive : ''}`}
-                onClick={() => setCalcType('variation_rep')}
-              >
-                Con Repetición: <strong>VR(n, k) = n<sup>k</sup></strong>
               </button>
             </div>
           </div>
@@ -337,13 +290,6 @@ export const CombinatoricsModule: React.FC = () => {
                 onClick={() => setCalcType('combination_simple')}
               >
                 Simple: <strong>C(n, k) = n! / [k!(n-k)!]</strong>
-              </button>
-              <button
-                type="button"
-                className={`${styles.formulaPill} ${calcType === 'combination_rep' ? styles.formulaPillActive : ''}`}
-                onClick={() => setCalcType('combination_rep')}
-              >
-                Con Repetición: <strong>CR(n, k)</strong>
               </button>
             </div>
           </div>
@@ -366,7 +312,7 @@ export const CombinatoricsModule: React.FC = () => {
             <span className={styles.inputHelp}>Cantidad total de elementos en el conjunto.</span>
           </div>
 
-          {calcType !== 'permutation_simple' && calcType !== 'permutation_circular' && calcType !== 'permutation_rep' && (
+          {calcType !== 'permutation_simple' && calcType !== 'permutation_rep' && (
             <div className={styles.inputCard}>
               <label className={styles.inputLabel}>
                 Elementos que se seleccionan (k):
@@ -374,12 +320,12 @@ export const CombinatoricsModule: React.FC = () => {
               <input
                 type="number"
                 min="0"
-                max={calcType.includes('rep') ? 25 : n}
+                max={n}
                 value={k}
                 onChange={e => setK(Math.max(0, parseInt(e.target.value) || 0))}
                 className={styles.largeInput}
               />
-              <span className={styles.inputHelp}>Tamaño del subgrupo a ordenar o agrupar.</span>
+              <span className={styles.inputHelp}>Tamaño del subgrupo a elegir.</span>
             </div>
           )}
 

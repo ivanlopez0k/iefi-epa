@@ -320,21 +320,11 @@ export const SetsModule: React.FC = () => {
             <span className={styles.opFormula}>Pertenecen al conjunto B pero NO al conjunto A</span>
           </div>
 
-          {/* Diferencia Simétrica A △ B */}
-          <div className={styles.opCard}>
-            <div className={styles.opHeader}>
-              <span className={styles.opSymbol}>A △ B</span>
-              <span className={styles.opBadge}>Dif. Simétrica ({ops.symmetricDiff.length})</span>
-            </div>
-            <div className={styles.opValue}>{formatSet(ops.symmetricDiff)}</div>
-            <span className={styles.opFormula}>(A - B) ∪ (B - A) = Pertenecen a uno u otro, pero no a ambos</span>
-          </div>
-
           {/* Complemento de A */}
           <div className={styles.opCard}>
             <div className={styles.opHeader}>
-              <span className={styles.opSymbol}>Aᶜ (o A')</span>
-              <span className={styles.opBadge}>Complemento ({ops.complementA.length})</span>
+              <span className={styles.opSymbol}>Aᶜ</span>
+              <span className={styles.opBadge}>Complemento de A</span>
             </div>
             <div className={styles.opValue}>{formatSet(ops.complementA)}</div>
             <span className={styles.opFormula}>U - A = Todo lo que pertenece al Universo pero no a A</span>
@@ -343,8 +333,8 @@ export const SetsModule: React.FC = () => {
           {/* Complemento de B */}
           <div className={styles.opCard}>
             <div className={styles.opHeader}>
-              <span className={styles.opSymbol}>Bᶜ (o B')</span>
-              <span className={styles.opBadge}>Complemento ({ops.complementB.length})</span>
+              <span className={styles.opSymbol}>Bᶜ</span>
+              <span className={styles.opBadge}>Complemento de B</span>
             </div>
             <div className={styles.opValue}>{formatSet(ops.complementB)}</div>
             <span className={styles.opFormula}>U - B = Todo lo que pertenece al Universo pero no a B</span>
@@ -355,8 +345,8 @@ export const SetsModule: React.FC = () => {
             <>
               <div className={styles.opCard}>
                 <div className={styles.opHeader}>
-                  <span className={styles.opSymbol}>Cᶜ (o C')</span>
-                  <span className={styles.opBadge}>Complemento ({ops.complementC?.length || 0})</span>
+                  <span className={styles.opSymbol}>Cᶜ</span>
+                  <span className={styles.opBadge}>Complemento de C</span>
                 </div>
                 <div className={styles.opValue}>{formatSet(ops.complementC || [])}</div>
                 <span className={styles.opFormula}>U - C = Elementos del Universo que no están en C</span>

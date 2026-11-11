@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styles from './StatisticsModule.module.css';
 import { parseNumberList, calculateDescriptiveStats } from '../../core/statistics/descriptive';
-import { Fraction, FormulaCard } from '../common/MathFormula';
 import { BarChart3, TrendingUp, Hash, Layers } from 'lucide-react';
 
 export const StatisticsModule: React.FC = () => {
@@ -98,70 +97,6 @@ export const StatisticsModule: React.FC = () => {
             <div>Máx: <strong>{stats.max}</strong></div>
             <div>Varianza s²: <strong>{stats.variance}</strong></div>
             <div>Desvío s: <strong>{stats.stdDev}</strong></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Formulas & Step-by-Step Box */}
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">Fórmulas y Desarrollo Analítico Paso a Paso</h3>
-          <span className="badge badge-teal">Demostración</span>
-        </div>
-
-        <div style={{ marginBottom: '1.25rem' }}>
-          <FormulaCard label="Fórmula de la Media Aritmética:">
-            <span>x̄</span>
-            <span style={{ margin: '0 0.5rem' }}>=</span>
-            <Fraction
-              num={<span>Σ (x<sub>i</sub> · f<sub>i</sub>)</span>}
-              den={<span>n</span>}
-            />
-            <span style={{ margin: '0 0.5rem' }}>=</span>
-            <Fraction
-              num={<span>{stats.data.reduce((a, b) => a + b, 0)}</span>}
-              den={<span>{stats.count}</span>}
-            />
-            <span style={{ margin: '0 0.5rem' }}>=</span>
-            <span>{stats.mean}</span>
-          </FormulaCard>
-        </div>
-
-        <div className={styles.stepsColumns}>
-          {/* Media Steps */}
-          <div className="step-box" style={{ marginTop: 0 }}>
-            <h4 style={{ color: '#ffffff', marginBottom: '0.4rem', fontSize: '0.9rem' }}>
-              1. Cálculo de la Media Aritmética (x̄):
-            </h4>
-            <ol>
-              {stats.meanSteps.map((step, idx) => (
-                <li key={idx}>{step}</li>
-              ))}
-            </ol>
-          </div>
-
-          {/* Mediana Steps */}
-          <div className="step-box" style={{ marginTop: 0 }}>
-            <h4 style={{ color: '#ffffff', marginBottom: '0.4rem', fontSize: '0.9rem' }}>
-              2. Determinación de la Mediana (Me):
-            </h4>
-            <ol>
-              {stats.medianSteps.map((step, idx) => (
-                <li key={idx}>{step}</li>
-              ))}
-            </ol>
-          </div>
-
-          {/* Moda Steps */}
-          <div className="step-box" style={{ marginTop: 0 }}>
-            <h4 style={{ color: '#ffffff', marginBottom: '0.4rem', fontSize: '0.9rem' }}>
-              3. Análisis de la Moda (Mo):
-            </h4>
-            <ol>
-              {stats.modeSteps.map((step, idx) => (
-                <li key={idx}>{step}</li>
-              ))}
-            </ol>
           </div>
         </div>
       </div>
