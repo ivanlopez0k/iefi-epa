@@ -9,58 +9,62 @@
 }
 
 .sectionHelp {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
   margin-bottom: var(--space-sm);
+  line-height: 1.5;
 }
 
 .omegaTextarea {
   width: 100%;
   font-family: var(--font-mono);
   font-size: 1rem;
-  background-color: var(--bg-input);
+  background-color: rgba(10, 16, 28, 0.8);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 0.75rem;
+  padding: 0.85rem 1rem;
+  line-height: 1.5;
 }
 
 .omegaPreview {
   margin-top: var(--space-sm);
-  background-color: rgba(14, 22, 38, 0.6);
+  background: rgba(10, 16, 28, 0.6);
   border-radius: var(--radius-md);
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid var(--border-subtle);
 }
 
 .omegaHeaderRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.6rem;
 }
 
 .omegaLabel {
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-dim);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .pointChips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
 .pointBadge {
-  background-color: var(--bg-card);
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  background: linear-gradient(180deg, rgba(24, 36, 60, 0.8) 0%, rgba(14, 22, 38, 0.9) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.3);
   color: #38bdf8;
   font-family: var(--font-mono);
-  font-size: 0.88rem;
-  padding: 0.3rem 0.65rem;
+  font-size: 0.9rem;
+  padding: 0.35rem 0.75rem;
   border-radius: var(--radius-sm);
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 /* Event Builder Grid */
@@ -79,26 +83,27 @@
 .nameRow {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.4rem;
   margin-bottom: var(--space-md);
 }
 
 .label {
-  font-size: 0.88rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
   color: var(--text-main);
 }
 
 .eventNameInput {
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .pointsSelectorBox {
-  background-color: var(--bg-input);
+  background: rgba(10, 16, 28, 0.7);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: var(--space-md);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .selectorHeader {
@@ -106,20 +111,21 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.5rem;
   margin-bottom: var(--space-sm);
 }
 
 .quickActions {
   display: flex;
-  gap: 0.35rem;
+  gap: 0.4rem;
 }
 
 .miniBtn {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
+  font-weight: 600;
   color: var(--text-muted);
-  padding: 2px 7px;
-  background-color: var(--bg-card);
+  padding: 3px 8px;
+  background-color: rgba(24, 36, 60, 0.6);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -129,41 +135,45 @@
 .miniBtn:hover {
   color: #ffffff;
   border-color: var(--accent-primary);
+  background-color: rgba(99, 102, 241, 0.2);
 }
 
 .clickablePointsGrid {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  max-height: 200px;
+  gap: 0.5rem;
+  max-height: 220px;
   overflow-y: auto;
+  padding: 0.25rem 0;
 }
 
 .pointToggleBtn {
-  background-color: var(--bg-card);
+  background-color: rgba(16, 24, 40, 0.9);
   border: 1px solid var(--border-subtle);
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 0.88rem;
-  padding: 0.45rem 0.8rem;
-  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.45rem;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .pointToggleBtn:hover {
-  border-color: var(--accent-primary);
+  border-color: rgba(99, 102, 241, 0.5);
   color: #ffffff;
+  transform: translateY(-1px);
 }
 
 .pointSelected {
-  background-color: var(--accent-primary);
-  border-color: var(--accent-primary);
+  background: var(--accent-primary-gradient);
+  border-color: rgba(255, 255, 255, 0.25);
   color: #ffffff;
   font-weight: 700;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
 }
 
 /* Calculation Panel */
@@ -177,14 +187,14 @@
   font-size: 0.82rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: var(--text-dim);
 }
 
 .resultsMetricGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-sm);
+  gap: var(--space-md);
 }
 
 @media (max-width: 600px) {
@@ -194,65 +204,77 @@
 }
 
 .metricBox {
-  background-color: var(--bg-input);
+  background: rgba(10, 16, 28, 0.7);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 0.75rem;
+  padding: 0.85rem;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.3rem;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05);
 }
 
 .metricName {
   font-size: 0.75rem;
   color: var(--text-dim);
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
 .metricPrimary {
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
   color: #ffffff;
   font-family: var(--font-mono);
+  letter-spacing: -0.02em;
 }
 
 .metricHighlight {
-  font-size: 1.35rem;
-  font-weight: 800;
+  font-size: 1.5rem;
+  font-weight: 900;
   color: var(--accent-teal);
   font-family: var(--font-mono);
+  text-shadow: 0 0 15px rgba(20, 184, 166, 0.35);
 }
 
 .classificationExpl {
   display: flex;
-  gap: 0.75rem;
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  padding: 0.85rem;
+  gap: 0.85rem;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  padding: 1rem;
   border-radius: var(--radius-md);
-  font-size: 0.85rem;
-  line-height: 1.4;
+  font-size: 0.88rem;
+  line-height: 1.5;
   color: var(--text-main);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
 }
 
 /* Saved Events Section */
 .savedEventsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--space-md);
   margin-bottom: var(--space-lg);
 }
 
 .savedEventCard {
-  background-color: var(--bg-input);
+  background: rgba(10, 16, 28, 0.75);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  transition: all var(--transition-fast);
+}
+
+.savedEventCard:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 .savedEventHeader {
@@ -262,57 +284,63 @@
 }
 
 .savedName {
-  font-size: 0.95rem;
+  font-size: 1rem;
+  font-weight: 700;
   color: #ffffff;
 }
 
 .deleteMiniBtn {
   color: var(--text-dim);
   cursor: pointer;
-  padding: 2px;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
 }
 
 .deleteMiniBtn:hover {
   color: var(--accent-rose);
+  background: rgba(244, 63, 94, 0.15);
 }
 
 .savedPointsRow {
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
   display: flex;
-  gap: 0.35rem;
+  gap: 0.4rem;
   word-break: break-all;
 }
 
 .savedStatsRow {
   display: flex;
   justify-content: space-between;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-family: var(--font-mono);
   color: var(--accent-teal);
   border-top: 1px solid var(--border-subtle);
-  padding-top: 0.4rem;
+  padding-top: 0.5rem;
+  font-weight: 600;
 }
 
 /* Mutually Exclusive Section */
 .mutuallyExclusiveSection {
-  background-color: rgba(14, 22, 38, 0.8);
+  background: rgba(10, 16, 28, 0.6);
   border-top: 1px solid var(--border-subtle);
-  padding-top: var(--space-md);
+  padding-top: var(--space-lg);
   margin-top: var(--space-md);
 }
 
 .compareTitle {
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
   color: #ffffff;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.35rem;
 }
 
 .compareHelp {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: var(--text-muted);
   margin-bottom: var(--space-md);
+  line-height: 1.5;
 }
 
 .selectorRow {
@@ -324,25 +352,28 @@
 
 .select {
   flex: 1;
+  font-weight: 600;
 }
 
 .compareVerdict {
   display: flex;
-  gap: 0.75rem;
-  padding: 1rem;
+  gap: 0.85rem;
+  padding: 1.15rem;
   border-radius: var(--radius-md);
-  font-size: 0.88rem;
-  line-height: 1.45;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .verdictExclusive {
-  background-color: rgba(20, 184, 166, 0.15);
-  border: 1px solid rgba(20, 184, 166, 0.4);
+  background: rgba(20, 184, 166, 0.15);
+  border: 1px solid rgba(20, 184, 166, 0.45);
   color: #a7f3d0;
+  box-shadow: 0 0 25px rgba(20, 184, 166, 0.15);
 }
 
 .verdictNotExclusive {
-  background-color: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.45);
   color: #fde68a;
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.15);
 }

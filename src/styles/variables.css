@@ -1,51 +1,66 @@
 :root {
-  /* Colors */
-  --bg-primary: #0b0f19;
-  --bg-secondary: #111827;
-  --bg-card: #182234;
-  --bg-card-hover: #1f2c42;
-  --bg-input: #0e1626;
+  /* Surface Colors */
+  --bg-primary: #070b14;
+  --bg-secondary: #0c1220;
+  --bg-card: rgba(16, 24, 40, 0.75);
+  --bg-card-hover: rgba(24, 36, 60, 0.85);
+  --bg-card-solid: #101828;
+  --bg-input: rgba(10, 16, 28, 0.8);
 
-  --border-subtle: #23324d;
-  --border-focus: #4f46e5;
-  --border-highlight: #38bdf8;
+  /* Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-highlight: rgba(255, 255, 255, 0.16);
+  --border-focus: #6366f1;
+  --border-glow: rgba(99, 102, 241, 0.4);
 
-  --text-main: #f1f5f9;
+  /* Typography Colors */
+  --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
-  --text-inverse: #0b0f19;
+  --text-inverse: #070b14;
 
   /* Accents */
   --accent-primary: #6366f1;
   --accent-primary-hover: #4f46e5;
-  --accent-primary-light: rgba(99, 102, 241, 0.15);
+  --accent-primary-gradient: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+  --accent-primary-light: rgba(99, 102, 241, 0.12);
 
   --accent-teal: #14b8a6;
-  --accent-teal-light: rgba(20, 184, 166, 0.15);
+  --accent-teal-gradient: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+  --accent-teal-light: rgba(20, 184, 166, 0.12);
+
+  --accent-cyan: #38bdf8;
+  --accent-cyan-light: rgba(56, 189, 248, 0.12);
 
   --accent-amber: #f59e0b;
-  --accent-amber-light: rgba(245, 158, 11, 0.15);
+  --accent-amber-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --accent-amber-light: rgba(245, 158, 11, 0.12);
 
   --accent-rose: #f43f5e;
-  --accent-rose-light: rgba(244, 63, 94, 0.15);
+  --accent-rose-gradient: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  --accent-rose-light: rgba(244, 63, 94, 0.12);
 
-  --accent-blue: #3b82f6;
-  --accent-blue-light: rgba(59, 130, 246, 0.15);
+  --accent-purple: #a855f7;
+  --accent-purple-light: rgba(168, 85, 247, 0.12);
 
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
 
-  /* Elevation & Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -2px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.45), 0 4px 6px -4px rgba(0, 0, 0, 0.45);
-  --shadow-glow: 0 0 20px -3px rgba(99, 102, 241, 0.3);
+  /* Elevation, Blur & Shadows */
+  --glass-blur: blur(16px);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 20px -4px rgba(0, 0, 0, 0.5), 0 4px 8px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 32px -6px rgba(0, 0, 0, 0.6), 0 8px 16px -4px rgba(0, 0, 0, 0.5);
+  --shadow-glow-primary: 0 0 25px -4px rgba(99, 102, 241, 0.45);
+  --shadow-glow-cyan: 0 0 25px -4px rgba(56, 189, 248, 0.4);
+  --shadow-glow-amber: 0 0 25px -4px rgba(245, 158, 11, 0.35);
 
   /* Radii */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
   --radius-full: 9999px;
 
   /* Spacing */
@@ -57,6 +72,7 @@
   --space-2xl: 3rem;
 
   /* Transitions */
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.25s ease;
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }

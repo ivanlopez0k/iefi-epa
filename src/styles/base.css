@@ -12,7 +12,31 @@ html, body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
-  line-height: 1.5;
+  line-height: 1.55;
+  background-image: 
+    radial-gradient(circle at 15% 5%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.1) 0%, transparent 45%),
+    radial-gradient(circle at 50% 85%, rgba(20, 184, 166, 0.08) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 16, 28, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.4);
 }
 
 button {
@@ -20,6 +44,7 @@ button {
   cursor: pointer;
   border: none;
   background: none;
+  transition: all var(--transition-normal);
 }
 
 input, select, textarea {
@@ -28,15 +53,17 @@ input, select, textarea {
   border: 1px solid var(--border-subtle);
   background-color: var(--bg-input);
   border-radius: var(--radius-md);
-  padding: 0.65rem 0.9rem;
+  padding: 0.75rem 1rem;
   font-size: 0.95rem;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: all var(--transition-fast);
   outline: none;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 input:focus, select:focus, textarea:focus {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+  background-color: rgba(15, 23, 42, 0.95);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25), inset 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* App Container */
@@ -48,42 +75,47 @@ input:focus, select:focus, textarea:focus {
 
 .main-content {
   flex: 1;
-  max-width: 1200px;
+  max-width: 1240px;
   width: 100%;
   margin: 0 auto;
   padding: var(--space-xl) var(--space-md);
 }
 
-/* UI Card */
+/* UI Card with Glassmorphism */
 .card {
-  background-color: var(--bg-card);
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-highlight);
   border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+  padding: var(--space-xl);
   box-shadow: var(--shadow-md);
-  transition: border-color var(--transition-normal);
+  transition: all var(--transition-normal);
 }
 
 .card:hover {
   border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: var(--shadow-lg), 0 0 20px -5px rgba(99, 102, 241, 0.15);
 }
 
 .card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-md);
-  padding-bottom: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .card-title {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--text-main);
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 0.6rem;
 }
 
 /* Badges */
@@ -91,42 +123,43 @@ input:focus, select:focus, textarea:focus {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.25rem 0.65rem;
+  padding: 0.3rem 0.75rem;
   border-radius: var(--radius-full);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(8px);
 }
 
 .badge-primary {
   background: var(--accent-primary-light);
   color: #a5b4fc;
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  border: 1px solid rgba(99, 102, 241, 0.35);
 }
 
 .badge-teal {
   background: var(--accent-teal-light);
   color: #5eead4;
-  border: 1px solid rgba(20, 184, 166, 0.3);
+  border: 1px solid rgba(20, 184, 166, 0.35);
 }
 
 .badge-amber {
   background: var(--accent-amber-light);
   color: #fcd34d;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border: 1px solid rgba(245, 158, 11, 0.35);
 }
 
 .badge-rose {
   background: var(--accent-rose-light);
   color: #fda4af;
-  border: 1px solid rgba(244, 63, 94, 0.3);
+  border: 1px solid rgba(244, 63, 94, 0.35);
 }
 
 .badge-blue {
-  background: var(--accent-blue-light);
-  color: #93c5fd;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: var(--accent-cyan-light);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.35);
 }
 
 /* Buttons */
@@ -135,21 +168,29 @@ input:focus, select:focus, textarea:focus {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.65rem 1.2rem;
+  padding: 0.75rem 1.4rem;
   border-radius: var(--radius-md);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.95rem;
   transition: all var(--transition-fast);
+  letter-spacing: 0.01em;
 }
 
 .btn-primary {
-  background-color: var(--accent-primary);
+  background: var(--accent-primary-gradient);
   color: white;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .btn-primary:hover {
-  background-color: var(--accent-primary-hover);
-  box-shadow: var(--shadow-glow);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+  filter: brightness(1.08);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
 }
 
 .btn-secondary {
@@ -160,59 +201,49 @@ input:focus, select:focus, textarea:focus {
 
 .btn-secondary:hover {
   background-color: var(--border-subtle);
+  color: #ffffff;
 }
 
-.btn-outline {
-  border: 1px solid var(--accent-primary);
-  color: #a5b4fc;
-}
-
-.btn-outline:hover {
-  background-color: var(--accent-primary-light);
-}
-
-/* Step-by-step container */
+/* Step-by-step resolution box */
 .step-box {
-  background-color: rgba(14, 22, 38, 0.8);
-  border-left: 3px solid var(--accent-primary);
+  background: linear-gradient(180deg, rgba(14, 22, 38, 0.9) 0%, rgba(10, 16, 28, 0.95) 100%);
+  border-left: 4px solid var(--accent-primary);
+  border-top: 1px solid var(--border-subtle);
+  border-right: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  padding: var(--space-md);
+  padding: var(--space-lg);
   margin-top: var(--space-md);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05);
 }
 
 .step-box ol, .step-box ul {
   padding-left: var(--space-lg);
-  margin-top: var(--space-xs);
+  margin-top: var(--space-sm);
 }
 
 .step-box li {
-  margin-bottom: var(--space-xs);
+  margin-bottom: 0.45rem;
   color: var(--text-muted);
   font-size: 0.92rem;
+  line-height: 1.5;
 }
 
 .step-box li:last-child {
   color: #38bdf8;
-  font-weight: 600;
+  font-weight: 700;
+  margin-top: 0.6rem;
+  padding-top: 0.4rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
 }
 
-/* Math formula display */
-.math-code {
-  font-family: var(--font-mono);
-  background-color: var(--bg-input);
-  padding: 0.3rem 0.6rem;
-  border-radius: var(--radius-sm);
-  color: #38bdf8;
-  font-size: 0.95rem;
-  border: 1px solid var(--border-subtle);
-}
-
-/* Tables */
+/* Table Design */
 .data-table-container {
   overflow-x: auto;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   margin-top: var(--space-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .data-table {
@@ -223,28 +254,38 @@ input:focus, select:focus, textarea:focus {
 }
 
 .data-table th {
-  background-color: var(--bg-secondary);
+  background-color: rgba(12, 18, 32, 0.9);
   color: var(--text-muted);
-  padding: 0.75rem 1rem;
-  font-weight: 600;
+  padding: 0.85rem 1.15rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
   border-bottom: 1px solid var(--border-subtle);
   white-space: nowrap;
 }
 
 .data-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid rgba(35, 50, 77, 0.5);
+  padding: 0.85rem 1.15rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   color: var(--text-main);
   white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+.data-table tr {
+  transition: background-color var(--transition-fast);
 }
 
 .data-table tr:hover td {
-  background-color: rgba(99, 102, 241, 0.04);
+  background-color: rgba(99, 102, 241, 0.06);
 }
 
 .data-table tfoot td {
   font-weight: 700;
-  background-color: rgba(17, 24, 39, 0.8);
+  background-color: rgba(12, 18, 32, 0.95);
   color: var(--accent-teal);
   border-top: 2px solid var(--border-subtle);
+  font-size: 0.92rem;
 }
