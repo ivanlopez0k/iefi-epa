@@ -1,0 +1,56 @@
+.mathDisplay {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cambria Math', monospace;
+  font-size: 1.15rem;
+  color: #38bdf8;
+  gap: 0.4rem;
+  vertical-align: middle;
+}
+
+.mathBlock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: rgba(14, 22, 38, 0.9);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin: 0.75rem 0;
+  overflow-x: auto;
+}
+
+.fraction {
+  display: inline-flex;
+  flex-direction: column;
+  vertical-align: middle;
+  text-align: center;
+  padding: 0 0.35rem;
+}
+
+.numerator {
+  border-bottom: 2px solid #38bdf8;
+  padding-bottom: 2px;
+  display: block;
+}
+
+.denominator {
+  padding-top: 2px;
+  display: block;
+}
+
+.sub {
+  font-size: 0.75em;
+  vertical-align: sub;
+}
+
+.sup {
+  font-size: 0.75em;
+  vertical-align: super;
+}
+
+.equal {
+  margin: 0 0.5rem;
+  color: #ffffff;
+}

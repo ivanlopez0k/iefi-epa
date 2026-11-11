@@ -1,56 +1,28 @@
 import React, { useState } from 'react';
 import styles from './ProbabilityModule.module.css';
-import { PRESET_EXPERIMENTS, buildEvent } from '../../core/probability/probabilityCore';
+import { buildEvent } from '../../core/probability/probabilityCore';
 import { parseSetInput, formatSet } from '../../core/sets/setOperations';
-import { Dices, Sparkles, Check, Info, Plus, Trash2 } from 'lucide-react';
 import type { ProbabilityEvent } from '../../types';
+import { Fraction, FormulaCard } from '../common/MathFormula';
+import { Dices, Check, Plus, Trash2, ShieldCheck, AlertCircle, Sparkles } from 'lucide-react';
 
 export const ProbabilityModule: React.FC = () => {
-  // Active experiment preset or custom
-  const [selectedPresetId, setSelectedPresetId] = useState<string>('cooperativa');
+  // User enters their own sample space Ω
+  const [omegaInput, setOmegaInput] = useState<string>('1, 2, 3, 4, 5, 6');
+  const omega = parseSetInput(omegaInput);
 
-  // Custom experiment states
-  const [customTitle, setCustomTitle] = useState<string>('Mi Experimento Aleatorio');
-  const [customOmegaInput, setCustomOmegaInput] = useState<string>('R1, R2, R3, R4, R5, R6');
+  // New Event creation state
+  const [eventName, setEventName] = useState<string>('Evento A');
+  const [selectedPoints, setSelectedPoints] = useState<string[]>(['2', '4', '6']);
 
-  // Active omega points
-  const activePreset = PRESET_EXPERIMENTS.find(p => p.id === selectedPresetId);
-  const omega: string[] = activePreset 
-    ? activePreset.omega 
-    : parseSetInput(customOmegaInput);
+  // Saved events list
+  const [events, setEvents] = useState<ProbabilityEvent[]>([]);
 
-  // User-created events list
-  const [events, setEvents] = useState<ProbabilityEvent[]>(() => {
-    const defaultExp = PRESET_EXPERIMENTS[0];
-    return defaultExp.sampleEvents.map((se, idx) => 
-      buildEvent(`ev-${idx}`, se.name, se.description, se.points, defaultExp.omega)
-    );
-  });
+  // Mutually exclusive compare selection
+  const [compareEv1Id, setCompareEv1Id] = useState<string>('');
+  const [compareEv2Id, setCompareEv2Id] = useState<string>('');
 
-  // Builder for new event
-  const [newEventName, setNewEventName] = useState<string>('Nuevo Evento');
-  const [newEventDesc, setNewEventDesc] = useState<string>('Descripción del evento');
-  const [selectedPoints, setSelectedPoints] = useState<string[]>([]);
-
-  // Switch preset
-  const handleSelectPreset = (presetId: string) => {
-    setSelectedPresetId(presetId);
-    setSelectedPoints([]);
-    const exp = PRESET_EXPERIMENTS.find(p => p.id === presetId);
-    if (exp) {
-      setEvents(exp.sampleEvents.map((se, idx) => 
-        buildEvent(`ev-${idx}`, se.name, se.description, se.points, exp.omega)
-      ));
-    }
-  };
-
-  const handleSelectCustom = () => {
-    setSelectedPresetId('custom');
-    setSelectedPoints([]);
-    setEvents([]);
-  };
-
-  // Toggle point selection in new event builder
+  // Toggle a point selection
   const togglePoint = (pt: string) => {
     if (selectedPoints.includes(pt)) {
       setSelectedPoints(selectedPoints.filter(p => p !== pt));
@@ -59,35 +31,59 @@ export const ProbabilityModule: React.FC = () => {
     }
   };
 
-  const selectAllPoints = () => {
-    setSelectedPoints([...omega]);
-  };
+  const selectAll = () => setSelectedPoints([...omega]);
+  const selectNone = () => setSelectedPoints([]);
+  const invertSelection = () => setSelectedPoints(omega.filter(p => !selectedPoints.includes(p)));
 
-  const clearSelectedPoints = () => {
-    setSelectedPoints([]);
-  };
+  // Current active event live calculation
+  const activeEvent = buildEvent(
+    'live-event',
+    eventName.trim() || 'Evento',
+    'Evento en evaluación',
+    selectedPoints,
+    omega
+  );
 
-  const handleCreateEvent = (e: React.FormEvent) => {
+  const handleSaveEvent = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newEventName.trim()) return;
+    if (!eventName.trim() || omega.length === 0) return;
 
-    const created = buildEvent(
-      `user-ev-${Date.now()}`,
-      newEventName.trim(),
-      newEventDesc.trim() || 'Definido interactivamente',
+    const newEv = buildEvent(
+      `ev-${Date.now()}`,
+      eventName.trim(),
+      `Puntos: ${formatSet(selectedPoints)}`,
       selectedPoints,
       omega
     );
 
-    setEvents([created, ...events]);
-    setNewEventName('Evento ' + String.fromCharCode(65 + events.length));
-    setNewEventDesc('');
+    const updated = [newEv, ...events];
+    setEvents(updated);
+    setEventName(`Evento ${String.fromCharCode(65 + updated.length)}`);
     setSelectedPoints([]);
+
+    // Auto set compare selectors if 2 events exist
+    if (updated.length === 2) {
+      setCompareEv1Id(updated[1].id);
+      setCompareEv2Id(updated[0].id);
+    }
   };
 
   const handleDeleteEvent = (id: string) => {
     setEvents(events.filter(ev => ev.id !== id));
+    if (compareEv1Id === id) setCompareEv1Id('');
+    if (compareEv2Id === id) setCompareEv2Id('');
   };
+
+  // Check mutually exclusive between two selected events
+  const ev1 = events.find(e => e.id === compareEv1Id);
+  const ev2 = events.find(e => e.id === compareEv2Id);
+
+  let intersectionPoints: string[] = [];
+  let areMutuallyExclusive = false;
+  if (ev1 && ev2 && ev1.id !== ev2.id) {
+    intersectionPoints = ev1.points.filter(p => ev2.points.includes(p));
+    areMutuallyExclusive = intersectionPoints.length === 0;
+  }
 
   const getBadgeClass = (classification: string) => {
     switch (classification) {
@@ -101,222 +97,278 @@ export const ProbabilityModule: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      {/* Preset Selector Bar */}
-      <div className={styles.presetBar}>
-        <span className={styles.presetTitle}>
-          <Sparkles size={16} /> Experimentos Predefinidos:
-        </span>
-        {PRESET_EXPERIMENTS.map(p => (
-          <button
-            key={p.id}
-            onClick={() => handleSelectPreset(p.id)}
-            className={`${styles.presetBtn} ${selectedPresetId === p.id ? styles.presetActive : ''}`}
-          >
-            {p.title}
-          </button>
-        ))}
-        <button
-          onClick={handleSelectCustom}
-          className={`${styles.presetBtn} ${selectedPresetId === 'custom' ? styles.presetActive : ''}`}
-        >
-          ✏️ Crear Experimento Libre
-        </button>
-      </div>
-
-      {/* Theoretical Context Card */}
+      {/* Step 1: Input Sample Space Ω */}
       <div className="card">
         <div className="card-header">
           <h2 className="card-title">
             <Dices className={styles.iconAccent} size={20} />
-            {activePreset ? activePreset.title : customTitle}
+            1. Definí tu Espacio Muestral (Ω)
           </h2>
-          <span className="badge badge-teal">
-            |Ω| = {omega.length} Puntos Muestrales
+          <span className="badge badge-primary">
+            Casos Totales: n(Ω) = {omega.length}
           </span>
         </div>
 
-        <p className={styles.experimentDesc}>
-          {activePreset ? activePreset.description : 'Definí los puntos que componen el espacio muestral Ω:'}
+        <p className={styles.sectionHelp}>
+          Ingresá todos los resultados posibles del experimento aleatorio, separados por coma o espacio:
         </p>
 
-        {selectedPresetId === 'custom' && (
-          <div className={styles.customInputs}>
-            <input
-              type="text"
-              placeholder="Nombre del experimento"
-              value={customTitle}
-              onChange={e => setCustomTitle(e.target.value)}
-              className={styles.titleInput}
-            />
-            <textarea
-              rows={2}
-              placeholder="Puntos muestrales de Ω (separados por coma): ej: Cara, Sello"
-              value={customOmegaInput}
-              onChange={e => setCustomOmegaInput(e.target.value)}
-            />
-          </div>
-        )}
+        <textarea
+          rows={2}
+          value={omegaInput}
+          onChange={e => {
+            setOmegaInput(e.target.value);
+            // clean selection of points no longer in omega
+            const newOmega = parseSetInput(e.target.value);
+            setSelectedPoints(prev => prev.filter(p => newOmega.includes(p)));
+          }}
+          placeholder="ej: 1, 2, 3, 4, 5, 6  ó  A, B, C, D  ó  Cara, Sello"
+          className={styles.omegaTextarea}
+        />
 
-        {/* Display Sample Space Omega */}
-        <div className={styles.omegaBox}>
-          <div className={styles.omegaHeader}>
-            <span className={styles.omegaSymbol}>Espacio Muestral (Ω):</span>
-            <span className={styles.omegaCount}>{omega.length} resultados posibles</span>
+        <div className={styles.omegaPreview}>
+          <div className={styles.omegaHeaderRow}>
+            <span className={styles.omegaLabel}>Puntos Muestrales Reconocidos ({omega.length}):</span>
+            {omega.length === 0 && (
+              <span style={{ color: 'var(--accent-rose)', fontSize: '0.82rem' }}>
+                * Ingresá al menos 1 resultado posible.
+              </span>
+            )}
           </div>
-          <div className={styles.pointsList}>
-            {omega.map((point, i) => (
-              <span key={i} className={styles.pointTag}>
+          <div className={styles.pointChips}>
+            {omega.map((point, idx) => (
+              <span key={idx} className={styles.pointBadge}>
                 {point}
               </span>
             ))}
           </div>
-          {activePreset && (
-            <p className={styles.omegaExplanation}>
-              <Info size={14} /> {activePreset.explanation}
-            </p>
-          )}
         </div>
       </div>
 
-      <div className={styles.grid}>
-        {/* Left: Interactive Event Builder */}
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">
-              <Plus size={18} className={styles.iconAccent} /> Constructor de Eventos
-            </h3>
-            <span className="badge badge-primary">Regla de Laplace</span>
-          </div>
+      {/* Step 2: Event Evaluator (Laplace Live) */}
+      <div className="card">
+        <div className="card-header">
+          <h2 className="card-title">
+            <Sparkles className={styles.iconAccent} size={20} />
+            2. Definición del Evento y Regla de Laplace
+          </h2>
+          <span className={`badge ${getBadgeClass(activeEvent.classification)}`}>
+            Evento {activeEvent.classification.toUpperCase()}
+          </span>
+        </div>
 
-          <form onSubmit={handleCreateEvent} className={styles.builderForm}>
-            <div className={styles.inputRow}>
-              <div className={styles.formGroup} style={{ flex: '1 1 140px' }}>
-                <label className={styles.label}>Nombre:</label>
-                <input
-                  type="text"
-                  placeholder="ej: Evento E"
-                  value={newEventName}
-                  onChange={e => setNewEventName(e.target.value)}
-                />
-              </div>
-              <div className={styles.formGroup} style={{ flex: '2 1 200px' }}>
-                <label className={styles.label}>Descripción / Condición:</label>
-                <input
-                  type="text"
-                  placeholder="ej: Sale al menos un presidente hombre"
-                  value={newEventDesc}
-                  onChange={e => setNewEventDesc(e.target.value)}
-                />
-              </div>
+        <div className={styles.eventBuilderGrid}>
+          {/* Controls */}
+          <div>
+            <div className={styles.nameRow}>
+              <label className={styles.label}>Nombre del Evento:</label>
+              <input
+                type="text"
+                value={eventName}
+                onChange={e => setEventName(e.target.value)}
+                placeholder="ej: Evento A (Número Par)"
+                className={styles.eventNameInput}
+              />
             </div>
 
-            <div className={styles.pointSelectorSection}>
+            <div className={styles.pointsSelectorBox}>
               <div className={styles.selectorHeader}>
-                <label className={styles.label}>
-                  Seleccionar Puntos Favorables ({selectedPoints.length} de {omega.length}):
-                </label>
-                <div className={styles.quickSelectBtns}>
-                  <button type="button" onClick={selectAllPoints} className={styles.miniBtn}>
+                <span className={styles.label}>
+                  Seleccioná los puntos favorables ({selectedPoints.length} de {omega.length}):
+                </span>
+                <div className={styles.quickActions}>
+                  <button type="button" onClick={selectAll} className={styles.miniBtn}>
                     Todos (Seguro)
                   </button>
-                  <button type="button" onClick={clearSelectedPoints} className={styles.miniBtn}>
+                  <button type="button" onClick={selectNone} className={styles.miniBtn}>
                     Ninguno (Imposible)
+                  </button>
+                  <button type="button" onClick={invertSelection} className={styles.miniBtn}>
+                    Invertir
                   </button>
                 </div>
               </div>
 
-              <div className={styles.pointButtonsGrid}>
-                {omega.map((point, idx) => {
-                  const isSelected = selectedPoints.includes(point);
-                  return (
-                    <button
-                      type="button"
-                      key={idx}
-                      onClick={() => togglePoint(point)}
-                      className={`${styles.pointPickBtn} ${isSelected ? styles.pointPicked : ''}`}
-                    >
-                      {point} {isSelected && <Check size={12} />}
-                    </button>
-                  );
-                })}
-              </div>
+              {omega.length === 0 ? (
+                <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem', padding: '1rem 0' }}>
+                  Primero ingresá los puntos del espacio muestral en el paso 1.
+                </p>
+              ) : (
+                <div className={styles.clickablePointsGrid}>
+                  {omega.map((point, idx) => {
+                    const isSelected = selectedPoints.includes(point);
+                    return (
+                      <button
+                        type="button"
+                        key={idx}
+                        onClick={() => togglePoint(point)}
+                        className={`${styles.pointToggleBtn} ${isSelected ? styles.pointSelected : ''}`}
+                      >
+                        {point} {isSelected && <Check size={14} />}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
-            {/* Live Laplace Preview */}
-            <div className={styles.laplacePreview}>
-              <div className={styles.previewFormula}>
-                P(E) = Casos Favorables / Casos Totales = {selectedPoints.length} / {omega.length}
-              </div>
-              <div className={styles.previewProb}>
-                {omega.length > 0 ? ((selectedPoints.length / omega.length) * 100).toFixed(2) : 0}%
-              </div>
-            </div>
-
-            <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-              <Plus size={16} /> Agregar Evento a la Lista
+            <button
+              type="button"
+              onClick={handleSaveEvent}
+              disabled={omega.length === 0}
+              className="btn btn-primary"
+              style={{ marginTop: '1rem', width: '100%' }}
+            >
+              <Plus size={16} /> Guardar Evento en la Lista de Análisis
             </button>
-          </form>
-        </div>
+          </div>
 
-        {/* Right: Events Table & Classifications */}
+          {/* Live Mathematical Formula & Result */}
+          <div className={styles.calculationPanel}>
+            <span className={styles.panelTitle}>Regla Clásica de Laplace:</span>
+
+            {/* Formula display with real fraction */}
+            <FormulaCard>
+              <span>P({eventName || 'E'})</span>
+              <span style={{ margin: '0 0.5rem' }}>=</span>
+              <Fraction
+                num={<span>Casos Favorables n(E)</span>}
+                den={<span>Casos Posibles n(Ω)</span>}
+              />
+              <span style={{ margin: '0 0.5rem' }}>=</span>
+              <Fraction
+                num={<span>{activeEvent.favorableCases}</span>}
+                den={<span>{activeEvent.totalCases}</span>}
+              />
+            </FormulaCard>
+
+            <div className={styles.resultsMetricGrid}>
+              <div className={styles.metricBox}>
+                <span className={styles.metricName}>Fracción Simplificada</span>
+                <span className={styles.metricPrimary}>{activeEvent.fraction}</span>
+              </div>
+              <div className={styles.metricBox}>
+                <span className={styles.metricName}>Probabilidad Decimal</span>
+                <span className={styles.metricPrimary}>{activeEvent.probability.toFixed(4)}</span>
+              </div>
+              <div className={styles.metricBox}>
+                <span className={styles.metricName}>Porcentaje</span>
+                <span className={styles.metricHighlight}>{activeEvent.percentage}</span>
+              </div>
+            </div>
+
+            {/* Classification Reasoning */}
+            <div className={styles.classificationExpl}>
+              <ShieldCheck size={18} className={styles.iconAccent} />
+              <div>
+                <strong>Clasificación: Evento {activeEvent.classification}</strong>
+                <p>
+                  {activeEvent.classification === 'imposible' && 'El evento no contiene puntos muestrales favorables (f = 0). Su probabilidad es 0%.'}
+                  {activeEvent.classification === 'elemental' && 'Contiene exactamente un solo punto muestral favorable (f = 1).'}
+                  {activeEvent.classification === 'compuesto' && `Contiene ${activeEvent.favorableCases} puntos muestrales favorables (más de uno, sin abarcar todo el espacio).`}
+                  {activeEvent.classification === 'seguro' && 'Contiene absolutamente todos los puntos del espacio muestral (f = n(Ω)). Su probabilidad es 100%.'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Step 3: Saved Events & Mutually Exclusive Evaluator */}
+      {events.length > 0 && (
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Eventos Evaluados &amp; Clasificación</h3>
+            <h2 className="card-title">
+              3. Eventos Guardados y Análisis de Exclusión Mutua
+            </h2>
             <span className="badge badge-teal">{events.length} Eventos</span>
           </div>
 
-          <div className={styles.eventsStack}>
-            {events.length === 0 ? (
-              <p className={styles.emptyNotice}>
-                No hay eventos agregados. Creá uno seleccionando puntos muestrales a la izquierda.
+          <div className={styles.savedEventsGrid}>
+            {events.map(ev => (
+              <div key={ev.id} className={styles.savedEventCard}>
+                <div className={styles.savedEventHeader}>
+                  <strong className={styles.savedName}>{ev.name}</strong>
+                  <span className={`badge ${getBadgeClass(ev.classification)}`}>
+                    {ev.classification}
+                  </span>
+                  <button
+                    onClick={() => handleDeleteEvent(ev.id)}
+                    className={styles.deleteMiniBtn}
+                    title="Eliminar evento"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+                <div className={styles.savedPointsRow}>
+                  <span>Puntos favorables:</span>
+                  <strong style={{ color: '#38bdf8' }}>{formatSet(ev.points)}</strong>
+                </div>
+                <div className={styles.savedStatsRow}>
+                  <span>P = {ev.fraction} ({ev.percentage})</span>
+                  <span>f = {ev.favorableCases} / {ev.totalCases}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Compare 2 events for Mutually Exclusive */}
+          {events.length >= 2 && (
+            <div className={styles.mutuallyExclusiveSection}>
+              <h3 className={styles.compareTitle}>
+                Evaluar si dos eventos son Mutuamente Excluyentes:
+              </h3>
+              <p className={styles.compareHelp}>
+                Dos eventos son mutuamente excluyentes si su intersección es vacía (no tienen puntos en común: A ∩ B = ∅):
               </p>
-            ) : (
-              events.map(ev => (
-                <div key={ev.id} className={styles.eventCard}>
-                  <div className={styles.eventTop}>
-                    <div>
-                      <div className={styles.eventTitleRow}>
-                        <h4 className={styles.eventName}>{ev.name}</h4>
-                        <span className={`badge ${getBadgeClass(ev.classification)}`}>
-                          Evento {ev.classification}
-                        </span>
-                      </div>
-                      <p className={styles.eventDescText}>{ev.description}</p>
-                    </div>
-                    <button
-                      onClick={() => handleDeleteEvent(ev.id)}
-                      className={styles.deleteBtn}
-                      title="Eliminar evento"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
 
-                  <div className={styles.eventPointsRow}>
-                    <span className={styles.pointsLabel}>Puntos muestrales:</span>
-                    <span className={styles.pointsSet}>{formatSet(ev.points)}</span>
-                  </div>
+              <div className={styles.selectorRow}>
+                <select
+                  value={compareEv1Id}
+                  onChange={e => setCompareEv1Id(e.target.value)}
+                  className={styles.select}
+                >
+                  <option value="">Seleccionar Evento 1</option>
+                  {events.map(e => (
+                    <option key={e.id} value={e.id}>{e.name}</option>
+                  ))}
+                </select>
 
-                  <div className={styles.eventMetrics}>
-                    <div className={styles.metricItem}>
-                      <span className={styles.metricLabel}>Casos Favorables:</span>
-                      <span className={styles.metricVal}>{ev.favorableCases}</span>
-                    </div>
-                    <div className={styles.metricItem}>
-                      <span className={styles.metricLabel}>Fracción Laplace:</span>
-                      <span className={styles.metricVal}>{ev.fraction}</span>
-                    </div>
-                    <div className={styles.metricItem}>
-                      <span className={styles.metricLabel}>Probabilidad:</span>
-                      <span className={styles.metricValHighlight}>{ev.percentage}</span>
-                    </div>
+                <span style={{ fontWeight: 700, color: '#ffffff' }}>vs</span>
+
+                <select
+                  value={compareEv2Id}
+                  onChange={e => setCompareEv2Id(e.target.value)}
+                  className={styles.select}
+                >
+                  <option value="">Seleccionar Evento 2</option>
+                  {events.map(e => (
+                    <option key={e.id} value={e.id}>{e.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {ev1 && ev2 && ev1.id !== ev2.id && (
+                <div className={`${styles.compareVerdict} ${areMutuallyExclusive ? styles.verdictExclusive : styles.verdictNotExclusive}`}>
+                  <AlertCircle size={20} />
+                  <div>
+                    <h4 style={{ fontWeight: 700, marginBottom: '0.2rem' }}>
+                      {areMutuallyExclusive
+                        ? `¡${ev1.name} y ${ev2.name} SON MUTUAMENTE EXCLUYENTES!`
+                        : `${ev1.name} y ${ev2.name} NO SON MUTUAMENTE EXCLUYENTES`}
+                    </h4>
+                    <p>
+                      {areMutuallyExclusive
+                        ? `Intersección vacía: ${ev1.name} ∩ ${ev2.name} = ∅. No pueden ocurrir simultáneamente. Regla de adición: P(A ∪ B) = P(A) + P(B) = ${ev1.fraction} + ${ev2.fraction}.`
+                        : `Tienen ${intersectionPoints.length} punto(s) en común: { ${intersectionPoints.join(', ')} }. Regla de adición: P(A ∪ B) = P(A) + P(B) - P(A ∩ B).`}
+                    </p>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </div>
   );
 };

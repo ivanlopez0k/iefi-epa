@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './SetsModule.module.css';
 import { parseSetInput, formatSet, calculateSetOperations } from '../../core/sets/setOperations';
-import { Layers, Sparkles, AlertCircle } from 'lucide-react';
+import { Layers, AlertCircle } from 'lucide-react';
 
 export const SetsModule: React.FC = () => {
   const [universeInput, setUniverseInput] = useState<string>('1, 2, 3, 4, 5, 6, 7, 8, 9, 10');
@@ -15,43 +15,8 @@ export const SetsModule: React.FC = () => {
   const ops = calculateSetOperations(universe, setA, setB);
   const areDisjoint = ops.intersection.length === 0;
 
-  // Preset buttons
-  const loadNumericPreset = () => {
-    setUniverseInput('1, 2, 3, 4, 5, 6, 7, 8, 9, 10');
-    setSetAInput('1, 2, 3, 4, 5');
-    setSetBInput('4, 5, 6, 7, 8');
-  };
-
-  const loadCooperativaPreset = () => {
-    setUniverseInput('Jorge, Alberto, Sara, Maria, Pedro');
-    setSetAInput('Jorge, Alberto, Sara');
-    setSetBInput('Sara, Maria, Pedro');
-  };
-
-  const loadDisjointPreset = () => {
-    setUniverseInput('1, 2, 3, 4, 5, 6, 7, 8');
-    setSetAInput('1, 3, 5, 7');
-    setSetBInput('2, 4, 6, 8');
-  };
-
   return (
     <div className={styles.container}>
-      {/* Preset bar */}
-      <div className={styles.presetBar}>
-        <span className={styles.presetTitle}>
-          <Sparkles size={16} /> Cargar Casos de Prueba:
-        </span>
-        <button className={styles.presetBtn} onClick={loadNumericPreset}>
-          1️⃣ Números del 1 al 10 con intersección {`{4, 5}`}
-        </button>
-        <button className={styles.presetBtn} onClick={loadDisjointPreset}>
-          ⚡ Mutuamente Excluyentes / Disjuntos (Pares vs Impares)
-        </button>
-        <button className={styles.presetBtn} onClick={loadCooperativaPreset}>
-          👥 Nombres / Candidatos Cooperativa
-        </button>
-      </div>
-
       <div className={styles.grid}>
         {/* Left: Input Form */}
         <div className="card">

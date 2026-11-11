@@ -13,7 +13,7 @@ describe('Combinatorics Core Math', () => {
   it('calculates 6 people sitting in theater seats (P_6 = 720)', () => {
     const res = calculatePermutationSimple(6);
     expect(res.result).toBe(720);
-    expect(res.steps).toContain('Respuesta: Existen 720 formas distintas.');
+    expect(res.steps).toContain('Resultado: Existen 720 formas distintas de ordenar 6 elementos.');
   });
 
   it('calculates permutation with repetition for word CASA (n=4, A repeats 2)', () => {

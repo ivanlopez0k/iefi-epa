@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styles from './StatisticsModule.module.css';
 import { parseNumberList, calculateDescriptiveStats } from '../../core/statistics/descriptive';
-import { BarChart3, Sparkles, TrendingUp, Hash, Layers } from 'lucide-react';
+import { Fraction, FormulaCard } from '../common/MathFormula';
+import { BarChart3, TrendingUp, Hash, Layers } from 'lucide-react';
 
 export const StatisticsModule: React.FC = () => {
   const [dataInput, setDataInput] = useState<string>(
@@ -11,47 +12,11 @@ export const StatisticsModule: React.FC = () => {
   const rawData = parseNumberList(dataInput);
   const stats = calculateDescriptiveStats(rawData);
 
-  // Presets
-  const loadExamPreset = () => {
-    setDataInput('4, 6, 7, 7, 8, 5, 9, 7, 6, 10, 8, 7, 5, 8, 9, 6, 7, 8');
-  };
-
-  const loadEvenDataset = () => {
-    setDataInput('10, 12, 14, 15, 18, 20, 22, 25'); // n = 8 (par para ver cálculo de mediana)
-  };
-
-  const loadOddDataset = () => {
-    setDataInput('5, 8, 12, 15, 19, 21, 24'); // n = 7 (impar)
-  };
-
-  const loadBimodalDataset = () => {
-    setDataInput('12, 12, 12, 15, 16, 18, 18, 18, 20, 22'); // Bimodal 12 y 18
-  };
-
-  // Find max fi for SVG scaling
+  // Find max fi for chart scaling
   const maxFi = stats.frequencies.reduce((acc, curr) => Math.max(acc, curr.fi), 1);
 
   return (
     <div className={styles.container}>
-      {/* Preset Bar */}
-      <div className={styles.presetBar}>
-        <span className={styles.presetTitle}>
-          <Sparkles size={16} /> Muestras de Ejemplo:
-        </span>
-        <button className={styles.presetBtn} onClick={loadExamPreset}>
-          📝 Notas de Examen (18 alumnos)
-        </button>
-        <button className={styles.presetBtn} onClick={loadEvenDataset}>
-          ⚖️ Muestra Par (n=8, cálculo mediana par)
-        </button>
-        <button className={styles.presetBtn} onClick={loadOddDataset}>
-          🎯 Muestra Impar (n=7, elemento central)
-        </button>
-        <button className={styles.presetBtn} onClick={loadBimodalDataset}>
-          ✌️ Serie Bimodal (dos modas)
-        </button>
-      </div>
-
       {/* Input Data Card */}
       <div className="card">
         <div className="card-header">
@@ -60,26 +25,26 @@ export const StatisticsModule: React.FC = () => {
             Ingreso de Datos de la Muestra
           </h2>
           <span className="badge badge-primary">
-            n = {stats.count} Observaciones
+            n = {stats.count} Datos Ingresados
           </span>
         </div>
 
         <p className={styles.intro}>
-          Ingresá los valores de la variable cuantitativa separados por comas, espacios o saltos de línea:
+          Pegá o escribí la lista de valores de tu muestra separados por comas, espacios o renglones:
         </p>
 
         <textarea
           rows={3}
           value={dataInput}
           onChange={e => setDataInput(e.target.value)}
-          placeholder="ej: 12, 15, 12, 18, 20, 15, 12"
+          placeholder="ej: 12, 15, 12, 18, 20, 15, 12, 14, 18"
           className={styles.dataTextarea}
         />
 
         <div className={styles.sortedPreview}>
-          <span className={styles.sortedLabel}>Muestra ordenada ({stats.count} datos):</span>
+          <span className={styles.sortedLabel}>Muestra ordenada de menor a mayor ({stats.count} elementos):</span>
           <span className={styles.sortedValues}>
-            {stats.sortedData.length > 0 ? stats.sortedData.join(' ≤ ') : 'Sin datos válidos'}
+            {stats.sortedData.length > 0 ? stats.sortedData.join(' ≤ ') : 'Sin datos válidos ingresados.'}
           </span>
         </div>
       </div>
@@ -93,7 +58,7 @@ export const StatisticsModule: React.FC = () => {
             <TrendingUp size={16} className={styles.metricIconTeal} />
           </div>
           <div className={styles.metricNumber}>{stats.mean}</div>
-          <div className={styles.metricSub}>Promedio ponderado: Σ x_i / n</div>
+          <div className={styles.metricSub}>Suma ponderada dividida por n</div>
         </div>
 
         {/* Mediana */}
@@ -104,7 +69,7 @@ export const StatisticsModule: React.FC = () => {
           </div>
           <div className={styles.metricNumber}>{stats.median}</div>
           <div className={styles.metricSub}>
-            50% de los datos están por debajo ({stats.count % 2 === 0 ? 'n par' : 'n impar'})
+            Valor central ({stats.count % 2 === 0 ? 'n par: promedio de 2 centros' : 'n impar: centro exacto'})
           </div>
         </div>
 
@@ -129,19 +94,37 @@ export const StatisticsModule: React.FC = () => {
             <span className="badge badge-blue">R = {stats.range}</span>
           </div>
           <div className={styles.dispersionGrid}>
-            <div>Min: <strong>{stats.min}</strong></div>
-            <div>Max: <strong>{stats.max}</strong></div>
-            <div>s²: <strong>{stats.variance}</strong></div>
-            <div>s: <strong>{stats.stdDev}</strong></div>
+            <div>Mín: <strong>{stats.min}</strong></div>
+            <div>Máx: <strong>{stats.max}</strong></div>
+            <div>Varianza s²: <strong>{stats.variance}</strong></div>
+            <div>Desvío s: <strong>{stats.stdDev}</strong></div>
           </div>
         </div>
       </div>
 
-      {/* Step by Step Breakdown for Mean, Median, Mode */}
+      {/* Formulas & Step-by-Step Box */}
       <div className="card">
         <div className="card-header">
-          <h3 className="card-title">Desarrollo y Justificación Paso a Paso</h3>
+          <h3 className="card-title">Fórmulas y Desarrollo Analítico Paso a Paso</h3>
           <span className="badge badge-teal">Demostración</span>
+        </div>
+
+        <div style={{ marginBottom: '1.25rem' }}>
+          <FormulaCard label="Fórmula de la Media Aritmética:">
+            <span>x̄</span>
+            <span style={{ margin: '0 0.5rem' }}>=</span>
+            <Fraction
+              num={<span>Σ (x<sub>i</sub> · f<sub>i</sub>)</span>}
+              den={<span>n</span>}
+            />
+            <span style={{ margin: '0 0.5rem' }}>=</span>
+            <Fraction
+              num={<span>{stats.data.reduce((a, b) => a + b, 0)}</span>}
+              den={<span>{stats.count}</span>}
+            />
+            <span style={{ margin: '0 0.5rem' }}>=</span>
+            <span>{stats.mean}</span>
+          </FormulaCard>
         </div>
 
         <div className={styles.stepsColumns}>
@@ -237,11 +220,11 @@ export const StatisticsModule: React.FC = () => {
         </div>
       </div>
 
-      {/* Visual Frequency Chart (SVG native) */}
+      {/* Bar chart */}
       <div className="card">
         <div className="card-header">
           <h3 className="card-title">Diagrama de Frecuencias Absolutas (Gráfico de Barras)</h3>
-          <span className="badge badge-teal">Representación Gráfica</span>
+          <span className="badge badge-teal">Visualización Gráfica</span>
         </div>
 
         <div className={styles.chartContainer}>
