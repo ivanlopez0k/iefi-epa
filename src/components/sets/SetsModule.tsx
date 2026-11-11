@@ -1,41 +1,75 @@
 import React, { useState } from 'react';
 import styles from './SetsModule.module.css';
 import { parseSetInput, formatSet, calculateSetOperations } from '../../core/sets/setOperations';
-import { Layers, AlertCircle } from 'lucide-react';
+import { Layers, Plus, Trash2, AlertCircle, Info } from 'lucide-react';
 
 export const SetsModule: React.FC = () => {
+  // Sets inputs
   const [universeInput, setUniverseInput] = useState<string>('1, 2, 3, 4, 5, 6, 7, 8, 9, 10');
   const [setAInput, setSetAInput] = useState<string>('1, 2, 3, 4, 5');
   const [setBInput, setSetBInput] = useState<string>('4, 5, 6, 7, 8');
+  
+  // Optional Set C
+  const [hasSetC, setHasSetC] = useState<boolean>(false);
+  const [setCInput, setSetCInput] = useState<string>('5, 6, 7, 9');
 
   const universe = parseSetInput(universeInput);
   const setA = parseSetInput(setAInput);
   const setB = parseSetInput(setBInput);
+  const setC = hasSetC ? parseSetInput(setCInput) : undefined;
 
-  const ops = calculateSetOperations(universe, setA, setB);
-  const areDisjoint = ops.intersection.length === 0;
+  const ops = calculateSetOperations(universe, setA, setB, setC);
+  const areDisjointAB = ops.differenceAB.length === ops.setA.length && ops.differenceBA.length === ops.setB.length;
+
+  // Helper to format short element preview inside SVG
+  const formatSvgPreview = (list?: string[]) => {
+    if (!list || list.length === 0) return '∅';
+    if (list.length <= 3) return list.join(', ');
+    return `${list.slice(0, 2).join(', ')}... (${list.length})`;
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.grid}>
-        {/* Left: Input Form */}
+        {/* Left: Input Form for Sets */}
         <div className="card">
           <div className="card-header">
             <h2 className="card-title">
               <Layers size={20} className={styles.iconAccent} /> Definición de Conjuntos
             </h2>
-            <span className="badge badge-primary">Álgebra de Conjuntos</span>
+            <div className={styles.setActions}>
+              {!hasSetC ? (
+                <button
+                  type="button"
+                  onClick={() => setHasSetC(true)}
+                  className="btn btn-primary"
+                  style={{ padding: '0.45rem 0.85rem', fontSize: '0.82rem' }}
+                >
+                  <Plus size={14} /> Agregar Conjunto C
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setHasSetC(false)}
+                  className="btn btn-secondary"
+                  style={{ padding: '0.45rem 0.85rem', fontSize: '0.82rem', color: 'var(--accent-rose)' }}
+                >
+                  <Trash2 size={14} /> Quitar Conjunto C
+                </button>
+              )}
+            </div>
           </div>
 
           <p className={styles.intro}>
-            Ingresá los elementos separados por comas, espacios o saltos de línea. Los duplicados se filtran automáticamente.
+            Ingresá los elementos separados por comas, espacios o saltos de línea. Los elementos repetidos se unifican automáticamente:
           </p>
 
           <div className={styles.inputStack}>
+            {/* Universe */}
             <div className={styles.inputGroup}>
               <label className={styles.label}>
-                Conjunto Universo (U / Ω):
-                <span className={styles.labelHint}>Totalidad de elementos de referencia</span>
+                <span>Conjunto Universo (U / Ω):</span>
+                <span className={styles.cardinalityText}>|U| = {ops.universe.length}</span>
               </label>
               <textarea
                 rows={2}
@@ -43,15 +77,13 @@ export const SetsModule: React.FC = () => {
                 onChange={e => setUniverseInput(e.target.value)}
                 placeholder="ej: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
               />
-              <span className={styles.cardinalityText}>
-                Cardinalidad |U| = {ops.universe.length} elementos
-              </span>
             </div>
 
+            {/* Set A */}
             <div className={styles.inputGroup}>
               <label className={styles.label}>
-                Conjunto A:
-                <span className={styles.labelHint}>Primer subconjunto</span>
+                <span style={{ color: '#a5b4fc' }}>Conjunto A:</span>
+                <span className={styles.cardinalityText}>|A| = {ops.setA.length}</span>
               </label>
               <textarea
                 rows={2}
@@ -59,15 +91,13 @@ export const SetsModule: React.FC = () => {
                 onChange={e => setSetAInput(e.target.value)}
                 placeholder="ej: 1, 2, 3, 4, 5"
               />
-              <span className={styles.cardinalityText}>
-                Cardinalidad |A| = {ops.setA.length} elementos
-              </span>
             </div>
 
+            {/* Set B */}
             <div className={styles.inputGroup}>
               <label className={styles.label}>
-                Conjunto B:
-                <span className={styles.labelHint}>Segundo subconjunto</span>
+                <span style={{ color: '#5eead4' }}>Conjunto B:</span>
+                <span className={styles.cardinalityText}>|B| = {ops.setB.length}</span>
               </label>
               <textarea
                 rows={2}
@@ -75,138 +105,282 @@ export const SetsModule: React.FC = () => {
                 onChange={e => setSetBInput(e.target.value)}
                 placeholder="ej: 4, 5, 6, 7, 8"
               />
-              <span className={styles.cardinalityText}>
-                Cardinalidad |B| = {ops.setB.length} elementos
-              </span>
             </div>
+
+            {/* Set C (Optional) */}
+            {hasSetC && (
+              <div className={styles.inputGroup}>
+                <label className={styles.label}>
+                  <span style={{ color: '#fcd34d' }}>Conjunto C:</span>
+                  <span className={styles.cardinalityText}>|C| = {ops.setC ? ops.setC.length : 0}</span>
+                </label>
+                <textarea
+                  rows={2}
+                  value={setCInput}
+                  onChange={e => setSetCInput(e.target.value)}
+                  placeholder="ej: 5, 6, 7, 9"
+                />
+              </div>
+            )}
           </div>
 
-          {/* Mutually exclusive status */}
-          <div className={`${styles.statusAlert} ${areDisjoint ? styles.statusDisjoint : styles.statusIntersect}`}>
-            <AlertCircle size={18} />
+          {/* Disjoint alert */}
+          <div className={`${styles.statusAlert} ${areDisjointAB ? styles.statusDisjoint : styles.statusIntersect}`}>
+            <AlertCircle size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
               <strong>
-                {areDisjoint ? '¡Conjuntos Mutuamente Excluyentes (Disjuntos)!' : 'Conjuntos con Elementos en Común'}
+                {areDisjointAB ? '¡A y B son Mutuamente Excluyentes / Disjuntos!' : 'Conjuntos con Elementos en Común'}
               </strong>
               <p>
-                {areDisjoint
-                  ? 'La intersección es vacía (A ∩ B = ∅). No comparten ningún elemento.'
-                  : `Comparten ${ops.intersection.length} elemento(s) en la intersección: ${formatSet(ops.intersection)}.`}
+                {areDisjointAB
+                  ? 'No comparten ningún elemento entre sí (A ∩ B = ∅).'
+                  : `Comparten elementos en su intersección: ${formatSet(ops.onlyAB)}.`}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Right: Visual Venn & Operations Results */}
+        {/* Right: Clean Diagram without formula clutter */}
         <div className="card">
           <div className="card-header">
-            <h2 className="card-title">Operaciones &amp; Diagrama de Venn</h2>
-            <span className="badge badge-teal">Resultados</span>
+            <h2 className="card-title">
+              Diagrama de Venn ({hasSetC ? '3 Conjuntos' : '2 Conjuntos'})
+            </h2>
+            <span className="badge badge-teal">Representación Gráfica</span>
           </div>
 
-          {/* SVG Venn Representation */}
+          {/* Clean Venn SVG without formula clutter */}
           <div className={styles.vennContainer}>
-            <svg viewBox="0 0 400 220" className={styles.vennSvg}>
-              {/* Universe Rect */}
-              <rect x="10" y="10" width="380" height="200" rx="10" className={styles.universeRect} />
-              <text x="25" y="32" className={styles.universeLabel}>U ({ops.universe.length})</text>
+            {!hasSetC ? (
+              // 2 Sets Venn SVG
+              <svg viewBox="0 0 460 260" className={styles.vennSvg}>
+                {/* Universe Rect */}
+                <rect x="10" y="10" width="440" height="240" rx="12" className={styles.universeRect} />
+                <text x="25" y="34" className={styles.universeLabel}>U ({ops.universe.length})</text>
 
-              {/* Circle A */}
-              <circle cx="150" cy="115" r="75" className={styles.circleA} />
-              <text x="100" y="70" className={styles.circleLabelA}>Conjunto A</text>
+                {/* Circles */}
+                <circle cx="180" cy="130" r="85" className={styles.circleA} />
+                <circle cx="280" cy="130" r="85" className={styles.circleB} />
 
-              {/* Circle B */}
-              <circle cx="250" cy="115" r="75" className={styles.circleB} />
-              <text x="265" y="70" className={styles.circleLabelB}>Conjunto B</text>
+                {/* Circle Labels outside */}
+                <text x="135" y="42" className={styles.circleLabelA}>Conjunto A ({ops.setA.length})</text>
+                <text x="325" y="42" className={styles.circleLabelB}>Conjunto B ({ops.setB.length})</text>
 
-              {/* Items in A only */}
-              <text x="125" y="115" className={styles.vennText}>
-                |A - B| = {ops.differenceAB.length}
-              </text>
-              <text x="125" y="135" className={styles.vennSubtext}>
-                {ops.differenceAB.slice(0, 3).join(', ')}{ops.differenceAB.length > 3 ? '...' : ''}
-              </text>
+                {/* Region: Only A */}
+                <g className={styles.regionGroup}>
+                  <text x="135" y="125" className={styles.regionCount}>{ops.onlyA.length}</text>
+                  <text x="135" y="145" className={styles.regionElements}>{formatSvgPreview(ops.onlyA)}</text>
+                  <text x="135" y="162" className={styles.regionHint}>Solo en A</text>
+                </g>
 
-              {/* Items in Intersection */}
-              <text x="200" y="115" className={styles.vennTextCenter}>
-                |A ∩ B| = {ops.intersection.length}
-              </text>
-              <text x="200" y="135" className={styles.vennSubtextCenter}>
-                {ops.intersection.slice(0, 3).join(', ')}{ops.intersection.length > 3 ? '...' : ''}
-              </text>
+                {/* Region: Center (A ∩ B) */}
+                <g className={styles.regionGroup}>
+                  <text x="230" y="125" className={styles.regionCountHighlight}>{ops.onlyAB.length}</text>
+                  <text x="230" y="145" className={styles.regionElementsHighlight}>{formatSvgPreview(ops.onlyAB)}</text>
+                  <text x="230" y="162" className={styles.regionHintHighlight}>A ∩ B</text>
+                </g>
 
-              {/* Items in B only */}
-              <text x="275" y="115" className={styles.vennText}>
-                |B - A| = {ops.differenceBA.length}
-              </text>
-              <text x="275" y="135" className={styles.vennSubtext}>
-                {ops.differenceBA.slice(0, 3).join(', ')}{ops.differenceBA.length > 3 ? '...' : ''}
-              </text>
-            </svg>
+                {/* Region: Only B */}
+                <g className={styles.regionGroup}>
+                  <text x="325" y="125" className={styles.regionCount}>{ops.onlyB.length}</text>
+                  <text x="325" y="145" className={styles.regionElements}>{formatSvgPreview(ops.onlyB)}</text>
+                  <text x="325" y="162" className={styles.regionHint}>Solo en B</text>
+                </g>
+
+                {/* Region: Outside (U - (A ∪ B)) */}
+                <text x="410" y="235" className={styles.outsideText}>
+                  Fuera: {ops.outsideAll.length} {ops.outsideAll.length > 0 && `(${formatSvgPreview(ops.outsideAll)})`}
+                </text>
+              </svg>
+            ) : (
+              // 3 Sets Venn SVG
+              <svg viewBox="0 0 480 360" className={styles.vennSvg}>
+                {/* Universe Rect */}
+                <rect x="10" y="10" width="460" height="340" rx="12" className={styles.universeRect} />
+                <text x="25" y="34" className={styles.universeLabel}>U ({ops.universe.length})</text>
+
+                {/* 3 Circles */}
+                <circle cx="185" cy="140" r="80" className={styles.circleA} />
+                <circle cx="295" cy="140" r="80" className={styles.circleB} />
+                <circle cx="240" cy="225" r="80" className={styles.circleC} />
+
+                {/* Labels */}
+                <text x="120" y="55" className={styles.circleLabelA}>Conjunto A ({ops.setA.length})</text>
+                <text x="360" y="55" className={styles.circleLabelB}>Conjunto B ({ops.setB.length})</text>
+                <text x="240" y="325" className={styles.circleLabelC}>Conjunto C ({ops.setC?.length || 0})</text>
+
+                {/* Only A */}
+                <text x="145" y="120" className={styles.regionCount}>{ops.onlyA.length}</text>
+                <text x="145" y="136" className={styles.regionElements}>{formatSvgPreview(ops.onlyA)}</text>
+
+                {/* Only B */}
+                <text x="335" y="120" className={styles.regionCount}>{ops.onlyB.length}</text>
+                <text x="335" y="136" className={styles.regionElements}>{formatSvgPreview(ops.onlyB)}</text>
+
+                {/* Only C */}
+                <text x="240" y="270" className={styles.regionCount}>{ops.onlyC?.length || 0}</text>
+                <text x="240" y="286" className={styles.regionElements}>{formatSvgPreview(ops.onlyC)}</text>
+
+                {/* A ∩ B only */}
+                <text x="240" y="105" className={styles.regionCountHighlight}>{ops.onlyAB.length}</text>
+                <text x="240" y="120" className={styles.regionElementsHighlight}>{formatSvgPreview(ops.onlyAB)}</text>
+
+                {/* A ∩ C only */}
+                <text x="180" y="195" className={styles.regionCountHighlight}>{ops.onlyAC?.length || 0}</text>
+                <text x="180" y="209" className={styles.regionElementsHighlight}>{formatSvgPreview(ops.onlyAC)}</text>
+
+                {/* B ∩ C only */}
+                <text x="300" y="195" className={styles.regionCountHighlight}>{ops.onlyBC?.length || 0}</text>
+                <text x="300" y="209" className={styles.regionElementsHighlight}>{formatSvgPreview(ops.onlyBC)}</text>
+
+                {/* A ∩ B ∩ C Center */}
+                <text x="240" y="160" className={styles.regionCountTriple}>{ops.allThree?.length || 0}</text>
+                <text x="240" y="174" className={styles.regionElementsTriple}>{formatSvgPreview(ops.allThree)}</text>
+
+                {/* Outside */}
+                <text x="420" y="330" className={styles.outsideText}>
+                  Fuera: {ops.outsideAll.length}
+                </text>
+              </svg>
+            )}
           </div>
 
-          {/* Operation Cards Grid */}
-          <div className={styles.opsGrid}>
-            {/* Unión */}
-            <div className={styles.opCard}>
-              <div className={styles.opHeader}>
-                <span className={styles.opSymbol}>A ∪ B</span>
-                <span className={styles.opBadge}>Unión ({ops.union.length})</span>
-              </div>
-              <div className={styles.opValue}>{formatSet(ops.union)}</div>
-              <span className={styles.opFormula}>|A ∪ B| = |A| + |B| - |A ∩ B| = {ops.setA.length} + {ops.setB.length} - {ops.intersection.length} = {ops.union.length}</span>
-            </div>
+          <p className={styles.diagramNotice}>
+            <Info size={14} /> El gráfico muestra la cantidad de elementos en cada región disjunta. Las fórmulas completas y el desglose de elementos se detallan abajo:
+          </p>
+        </div>
+      </div>
 
-            {/* Intersección */}
-            <div className={styles.opCard}>
-              <div className={styles.opHeader}>
-                <span className={styles.opSymbol}>A ∩ B</span>
-                <span className={styles.opBadge}>Intersección ({ops.intersection.length})</span>
-              </div>
-              <div className={styles.opValue}>{formatSet(ops.intersection)}</div>
-              <span className={styles.opFormula}>Elementos comunes a ambos conjuntos</span>
-            </div>
+      {/* Operations & Formulas displayed cleanly BELOW the diagram */}
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">Fórmulas y Operaciones Analíticas de Conjuntos</h3>
+          <span className="badge badge-primary">Desarrollo Matemático</span>
+        </div>
 
-            {/* Diferencia A - B */}
-            <div className={styles.opCard}>
-              <div className={styles.opHeader}>
-                <span className={styles.opSymbol}>A - B</span>
-                <span className={styles.opBadge}>Diferencia ({ops.differenceAB.length})</span>
-              </div>
-              <div className={styles.opValue}>{formatSet(ops.differenceAB)}</div>
-              <span className={styles.opFormula}>Pertenecen a A pero no a B</span>
+        {/* Inclusion-Exclusion Principle Formula */}
+        <div className={styles.inclusionFormulaBox}>
+          <span className={styles.formulaTitle}>Principio de Inclusión-Exclusión:</span>
+          {!hasSetC ? (
+            <div className={styles.formulaText}>
+              |A ∪ B| = |A| + |B| - |A ∩ B| = {ops.setA.length} + {ops.setB.length} - {ops.onlyAB.length} = <strong>{ops.union.length} elementos</strong>
             </div>
+          ) : (
+            <div className={styles.formulaText}>
+              |A ∪ B ∪ C| = |A| + |B| + |C| - (|A ∩ B| + |A ∩ C| + |B ∩ C|) + |A ∩ B ∩ C| = <strong>{ops.union.length} elementos</strong>
+            </div>
+          )}
+        </div>
 
-            {/* Diferencia B - A */}
-            <div className={styles.opCard}>
-              <div className={styles.opHeader}>
-                <span className={styles.opSymbol}>B - A</span>
-                <span className={styles.opBadge}>Diferencia ({ops.differenceBA.length})</span>
-              </div>
-              <div className={styles.opValue}>{formatSet(ops.differenceBA)}</div>
-              <span className={styles.opFormula}>Pertenecen a B pero no a A</span>
+        {/* Grid of All Calculated Set Operations */}
+        <div className={styles.opsGrid}>
+          {/* Unión */}
+          <div className={styles.opCard}>
+            <div className={styles.opHeader}>
+              <span className={styles.opSymbol}>{!hasSetC ? 'A ∪ B' : 'A ∪ B ∪ C'}</span>
+              <span className={styles.opBadge}>Unión ({ops.union.length})</span>
             </div>
-
-            {/* Diferencia Simétrica */}
-            <div className={styles.opCard}>
-              <div className={styles.opHeader}>
-                <span className={styles.opSymbol}>A △ B</span>
-                <span className={styles.opBadge}>Dif. Simétrica ({ops.symmetricDiff.length})</span>
-              </div>
-              <div className={styles.opValue}>{formatSet(ops.symmetricDiff)}</div>
-              <span className={styles.opFormula}>(A - B) ∪ (B - A)</span>
-            </div>
-
-            {/* Complemento de A */}
-            <div className={styles.opCard}>
-              <div className={styles.opHeader}>
-                <span className={styles.opSymbol}>Aᶜ</span>
-                <span className={styles.opBadge}>Complemento de A ({ops.complementA.length})</span>
-              </div>
-              <div className={styles.opValue}>{formatSet(ops.complementA)}</div>
-              <span className={styles.opFormula}>U - A (todo lo que no está en A)</span>
-            </div>
+            <div className={styles.opValue}>{formatSet(ops.union)}</div>
+            <span className={styles.opFormula}>Todos los elementos presentes en al menos uno de los conjuntos</span>
           </div>
+
+          {/* Intersección */}
+          <div className={styles.opCard}>
+            <div className={styles.opHeader}>
+              <span className={styles.opSymbol}>{!hasSetC ? 'A ∩ B' : 'A ∩ B ∩ C'}</span>
+              <span className={styles.opBadge}>
+                Intersección ({!hasSetC ? ops.onlyAB.length : (ops.allThree?.length || 0)})
+              </span>
+            </div>
+            <div className={styles.opValue}>
+              {!hasSetC ? formatSet(ops.onlyAB) : formatSet(ops.allThree || [])}
+            </div>
+            <span className={styles.opFormula}>
+              {!hasSetC ? 'Elementos comunes a A y B' : 'Elementos presentes en los tres conjuntos a la vez'}
+            </span>
+          </div>
+
+          {/* Diferencia A - B */}
+          <div className={styles.opCard}>
+            <div className={styles.opHeader}>
+              <span className={styles.opSymbol}>A - B</span>
+              <span className={styles.opBadge}>Diferencia ({ops.differenceAB.length})</span>
+            </div>
+            <div className={styles.opValue}>{formatSet(ops.differenceAB)}</div>
+            <span className={styles.opFormula}>Pertenecen al conjunto A pero NO al conjunto B</span>
+          </div>
+
+          {/* Diferencia B - A */}
+          <div className={styles.opCard}>
+            <div className={styles.opHeader}>
+              <span className={styles.opSymbol}>B - A</span>
+              <span className={styles.opBadge}>Diferencia ({ops.differenceBA.length})</span>
+            </div>
+            <div className={styles.opValue}>{formatSet(ops.differenceBA)}</div>
+            <span className={styles.opFormula}>Pertenecen al conjunto B pero NO al conjunto A</span>
+          </div>
+
+          {/* Diferencia Simétrica A △ B */}
+          <div className={styles.opCard}>
+            <div className={styles.opHeader}>
+              <span className={styles.opSymbol}>A △ B</span>
+              <span className={styles.opBadge}>Dif. Simétrica ({ops.symmetricDiff.length})</span>
+            </div>
+            <div className={styles.opValue}>{formatSet(ops.symmetricDiff)}</div>
+            <span className={styles.opFormula}>(A - B) ∪ (B - A) = Pertenecen a uno u otro, pero no a ambos</span>
+          </div>
+
+          {/* Complemento de A */}
+          <div className={styles.opCard}>
+            <div className={styles.opHeader}>
+              <span className={styles.opSymbol}>Aᶜ (o A')</span>
+              <span className={styles.opBadge}>Complemento ({ops.complementA.length})</span>
+            </div>
+            <div className={styles.opValue}>{formatSet(ops.complementA)}</div>
+            <span className={styles.opFormula}>U - A = Todo lo que pertenece al Universo pero no a A</span>
+          </div>
+
+          {/* Complemento de B */}
+          <div className={styles.opCard}>
+            <div className={styles.opHeader}>
+              <span className={styles.opSymbol}>Bᶜ (o B')</span>
+              <span className={styles.opBadge}>Complemento ({ops.complementB.length})</span>
+            </div>
+            <div className={styles.opValue}>{formatSet(ops.complementB)}</div>
+            <span className={styles.opFormula}>U - B = Todo lo que pertenece al Universo pero no a B</span>
+          </div>
+
+          {/* Operations when C is enabled */}
+          {hasSetC && (
+            <>
+              <div className={styles.opCard}>
+                <div className={styles.opHeader}>
+                  <span className={styles.opSymbol}>Cᶜ (o C')</span>
+                  <span className={styles.opBadge}>Complemento ({ops.complementC?.length || 0})</span>
+                </div>
+                <div className={styles.opValue}>{formatSet(ops.complementC || [])}</div>
+                <span className={styles.opFormula}>U - C = Elementos del Universo que no están en C</span>
+              </div>
+
+              <div className={styles.opCard}>
+                <div className={styles.opHeader}>
+                  <span className={styles.opSymbol}>A ∩ C</span>
+                  <span className={styles.opBadge}>Intersección ({ops.intersectionAC?.length || 0})</span>
+                </div>
+                <div className={styles.opValue}>{formatSet(ops.intersectionAC || [])}</div>
+                <span className={styles.opFormula}>Elementos comunes a A y C</span>
+              </div>
+
+              <div className={styles.opCard}>
+                <div className={styles.opHeader}>
+                  <span className={styles.opSymbol}>B ∩ C</span>
+                  <span className={styles.opBadge}>Intersección ({ops.intersectionBC?.length || 0})</span>
+                </div>
+                <div className={styles.opValue}>{formatSet(ops.intersectionBC || [])}</div>
+                <span className={styles.opFormula}>Elementos comunes a B y C</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

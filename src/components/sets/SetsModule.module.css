@@ -20,6 +20,12 @@
   color: var(--accent-primary);
 }
 
+.setActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
 .intro {
   font-size: 0.9rem;
   color: var(--text-muted);
@@ -30,7 +36,7 @@
 .inputStack {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-md);
 }
 
 .inputGroup {
@@ -48,17 +54,11 @@
   align-items: baseline;
 }
 
-.labelHint {
-  font-size: 0.78rem;
-  font-weight: normal;
-  color: var(--text-dim);
-}
-
 .cardinalityText {
   font-size: 0.8rem;
   color: #38bdf8;
   font-family: var(--font-mono);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .statusAlert {
@@ -87,24 +87,24 @@
 
 /* Venn Diagram SVG */
 .vennContainer {
-  background: linear-gradient(180deg, rgba(10, 16, 28, 0.85) 0%, rgba(6, 10, 18, 0.95) 100%);
+  background: linear-gradient(180deg, rgba(10, 16, 28, 0.95) 0%, rgba(6, 10, 18, 0.98) 100%);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: var(--space-md);
+  padding: var(--space-sm);
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-sm);
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .vennSvg {
   width: 100%;
-  max-height: 230px;
+  max-height: 340px;
 }
 
 .universeRect {
-  fill: rgba(12, 18, 32, 0.5);
+  fill: rgba(12, 18, 32, 0.6);
   stroke: rgba(255, 255, 255, 0.1);
   stroke-width: 1.5;
 }
@@ -116,66 +116,169 @@
   font-family: var(--font-mono);
 }
 
+/* Circles */
 .circleA {
-  fill: rgba(99, 102, 241, 0.22);
+  fill: rgba(99, 102, 241, 0.18);
   stroke: #818cf8;
   stroke-width: 2.5;
-  transition: all var(--transition-fast);
 }
 
 .circleB {
-  fill: rgba(20, 184, 166, 0.22);
+  fill: rgba(20, 184, 166, 0.18);
   stroke: #2dd4bf;
   stroke-width: 2.5;
-  transition: all var(--transition-fast);
+}
+
+.circleC {
+  fill: rgba(245, 158, 11, 0.18);
+  stroke: #fcd34d;
+  stroke-width: 2.5;
 }
 
 .circleLabelA {
   fill: #c7d2fe;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 800;
+  text-anchor: middle;
 }
 
 .circleLabelB {
   fill: #99f6e4;
   font-size: 13px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+.circleLabelC {
+  fill: #fef08a;
+  font-size: 13px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+/* Clean SVG Region Labels */
+.regionGroup {
+  cursor: default;
+}
+
+.regionCount {
+  fill: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  text-anchor: middle;
+  font-family: var(--font-mono);
+}
+
+.regionElements {
+  fill: #cbd5e1;
+  font-size: 11px;
+  font-weight: 600;
+  text-anchor: middle;
+  font-family: var(--font-mono);
+}
+
+.regionHint {
+  fill: var(--text-dim);
+  font-size: 9px;
+  text-anchor: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.regionCountHighlight {
+  fill: #38bdf8;
+  font-size: 16px;
+  font-weight: 800;
+  text-anchor: middle;
+  font-family: var(--font-mono);
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5));
+}
+
+.regionElementsHighlight {
+  fill: #bae6fd;
+  font-size: 11px;
+  font-weight: 700;
+  text-anchor: middle;
+  font-family: var(--font-mono);
+}
+
+.regionHintHighlight {
+  fill: #38bdf8;
+  font-size: 9px;
+  text-anchor: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   font-weight: 700;
 }
 
-.vennText {
-  fill: #ffffff;
-  font-size: 13px;
+.regionCountTriple {
+  fill: #f59e0b;
+  font-size: 17px;
+  font-weight: 900;
+  text-anchor: middle;
+  font-family: var(--font-mono);
+  filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));
+}
+
+.regionElementsTriple {
+  fill: #fef08a;
+  font-size: 11px;
   font-weight: 800;
   text-anchor: middle;
   font-family: var(--font-mono);
 }
 
-.vennSubtext {
-  fill: #cbd5e1;
+.outsideText {
+  fill: var(--text-dim);
   font-size: 11px;
-  text-anchor: middle;
+  font-weight: 600;
   font-family: var(--font-mono);
+  text-anchor: end;
 }
 
-.vennTextCenter {
-  fill: #38bdf8;
-  font-size: 13px;
-  font-weight: 800;
-  text-anchor: middle;
-  font-family: var(--font-mono);
+.diagramNotice {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: var(--space-xs);
 }
 
-.vennSubtextCenter {
-  fill: #bae6fd;
-  font-size: 11px;
-  text-anchor: middle;
-  font-family: var(--font-mono);
+/* Inclusion-Exclusion Principle Box */
+.inclusionFormulaBox {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(56, 189, 248, 0.1) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
 }
 
-/* Operation Grid */
+.formulaTitle {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #a5b4fc;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.formulaText {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: #f1f5f9;
+  line-height: 1.5;
+}
+
+.formulaText strong {
+  color: #38bdf8;
+}
+
+/* Operations Grid */
 .opsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: var(--space-md);
 }
 
@@ -183,7 +286,7 @@
   background: rgba(10, 16, 28, 0.7);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 0.95rem;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
@@ -225,7 +328,7 @@
   color: #38bdf8;
   word-break: break-word;
   background-color: rgba(6, 10, 18, 0.85);
-  padding: 0.5rem 0.65rem;
+  padding: 0.55rem 0.75rem;
   border-radius: var(--radius-sm);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -233,4 +336,5 @@
 .opFormula {
   font-size: 0.75rem;
   color: var(--text-dim);
+  line-height: 1.35;
 }

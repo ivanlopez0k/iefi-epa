@@ -34,13 +34,31 @@ export interface SetOperationsResult {
   universe: string[];
   setA: string[];
   setB: string[];
+  setC?: string[];
+  hasC: boolean;
   union: string[];
-  intersection: string[];
+  intersection: string[]; // A ∩ B (or A ∩ B ∩ C)
   differenceAB: string[];
   differenceBA: string[];
   symmetricDiff: string[];
   complementA: string[];
   complementB: string[];
+  complementC?: string[];
+
+  // Disjoint Venn regions:
+  onlyA: string[];
+  onlyB: string[];
+  onlyC?: string[];
+  onlyAB: string[]; // in A and B only
+  onlyAC?: string[]; // in A and C only
+  onlyBC?: string[]; // in B and C only
+  allThree?: string[]; // in A and B and C
+  outsideAll: string[]; // in U but not in any
+
+  // Pairwise intersections
+  intersectionAB?: string[];
+  intersectionAC?: string[];
+  intersectionBC?: string[];
 }
 
 // Probability
