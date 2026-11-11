@@ -1,0 +1,237 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.presetBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  background-color: rgba(30, 41, 59, 0.4);
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-subtle);
+}
+
+.presetTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-amber);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.presetBtn {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  transition: all var(--transition-fast);
+}
+
+.presetBtn:hover {
+  background-color: var(--accent-primary-light);
+  color: #a5b4fc;
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.iconAccent {
+  color: var(--accent-primary);
+}
+
+.intro {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.dataTextarea {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.sortedPreview {
+  margin-top: var(--space-sm);
+  padding: 0.6rem 0.85rem;
+  background-color: rgba(14, 22, 38, 0.6);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.sortedLabel {
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.sortedValues {
+  font-family: var(--font-mono);
+  color: #38bdf8;
+  word-break: break-all;
+}
+
+/* Metrics Cards Grid */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md);
+}
+
+.metricCard {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: border-color var(--transition-fast);
+}
+
+.metricCard:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.metricHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metricTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.metricIconTeal {
+  color: var(--accent-teal);
+}
+
+.metricIconIndigo {
+  color: var(--accent-primary);
+}
+
+.metricIconAmber {
+  color: var(--accent-amber);
+}
+
+.metricNumber {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+}
+
+.metricSub {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.dispersionGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.dispersionGrid strong {
+  color: #ffffff;
+  font-family: var(--font-mono);
+}
+
+/* Steps Columns */
+.stepsColumns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-md);
+}
+
+/* Table tag */
+.modeTag {
+  background-color: var(--accent-amber-light);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  margin-left: 0.4rem;
+}
+
+/* Bar Chart */
+.chartContainer {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg) var(--space-md) var(--space-sm);
+  overflow-x: auto;
+}
+
+.barsContainer {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-md);
+  height: 200px;
+  min-width: max-content;
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid var(--border-subtle);
+}
+
+.barColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  height: 100%;
+  justify-content: flex-end;
+  min-width: 36px;
+}
+
+.barValue {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.barTrack {
+  width: 28px;
+  height: 140px;
+  background-color: rgba(30, 41, 59, 0.4);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  display: flex;
+  align-items: flex-end;
+}
+
+.barFill {
+  width: 100%;
+  background: linear-gradient(180deg, #6366f1, #4338ca);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: height 0.3s ease;
+}
+
+.barMode {
+  background: linear-gradient(180deg, #f59e0b, #d97706);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+
+.barLabel {
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-main);
+}

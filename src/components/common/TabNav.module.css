@@ -1,0 +1,76 @@
+.navContainer {
+  margin-bottom: var(--space-xl);
+  border-bottom: 1px solid var(--border-subtle);
+  overflow-x: auto;
+}
+
+.tabList {
+  display: flex;
+  gap: var(--space-sm);
+  min-width: max-content;
+  padding-bottom: 2px;
+}
+
+.tabButton {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  background-color: transparent;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  border-bottom: none;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.tabButton:hover {
+  color: var(--text-main);
+  background-color: rgba(30, 41, 59, 0.4);
+}
+
+.tabButton.active {
+  color: #ffffff;
+  background-color: var(--bg-card);
+  border-color: var(--border-subtle);
+}
+
+.tabButton.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-primary), var(--border-highlight));
+  border-radius: 3px 3px 0 0;
+}
+
+.tabIcon {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.tabTextGroup {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.tabBadge {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+}
+
+.tabButton.active .tabBadge {
+  color: #38bdf8;
+}
+
+.tabLabel {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
