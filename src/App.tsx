@@ -30,10 +30,7 @@ export const App: React.FC = () => {
         fontSize: '0.85rem'
       }}>
         <p>
-          <strong>Estadística y Probabilidad Aplicada (EPA)</strong> • Herramienta de aprendizaje y cálculo para IEFI
-        </p>
-        <p style={{ marginTop: '0.35rem', fontSize: '0.8rem' }}>
-          Construido con React, TypeScript y CSS puro (Box Model &amp; Custom Properties nativas).
+          Estadística y Probabilidad Aplicada - Angel Ivan Lopez y Eliana Neira
         </p>
       </footer>
     </div>
